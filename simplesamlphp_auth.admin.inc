@@ -32,12 +32,14 @@ function simplesamlphp_auth_settings() {
     '#default_value' => $config->get('activate'),
     '#description' => t('Checking this box before configuring the module could lock you out of Backdrop.'),
   );
-  $form['simplesamlphp_auth_grp_setup']['installdir'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Installation directory (default: /var/simplesamlphp)'),
-    '#default_value' => $config->get('installdir'),
-    '#description' => t('The base directory of simpleSAMLphp. Absolute path with no trailing slash.'),
-  );
+  if (!module_exists('composer_manager')) {
+    $form['simplesamlphp_auth_grp_setup']['installdir'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Installation directory (default: /var/simplesamlphp)'),
+      '#default_value' => $config->get('installdir'),
+      '#description' => t('The base directory of simpleSAMLphp. Absolute path with no trailing slash.'),
+    );
+  }
   $form['simplesamlphp_auth_grp_setup']['authsource'] = array(
     '#type' => 'textfield',
     '#title' => t('Authenticaton source for this SP (default: default-sp)'),

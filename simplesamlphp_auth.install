@@ -32,18 +32,35 @@ function simplesamlphp_auth_requirements($phase) {
       );
     }
 
-    $basedir = $config->get('installdir');
-    if (!file_exists($basedir . '/lib/_autoload.php')) {
+    if (!simplesamlphp_auth_library_found()) {
       $requirements['simplesamlphp_auth'] = array(
         'severity' => REQUIREMENT_WARNING,
         'title' => 'simpleSAMLphp_auth',
-        'value' => t('SimpleSAMLphp authentication is missing the required SimpleSAMLphp library'),
-        'description' => t('Please download and install the !simplesamlphp library.', array('!simplesamlphp' => l(t('SimpeSAMLphp'), 'https://simplesamlphp.org/download'))),
+        'value' => t('Missing SimpleSAMLphp library'),
+        'description' => t('This module requires the SimpleSAMLphp library. See the !simplesamlphp module project page for further information.', array('!simplesamlphp' => l(t('SimpleSAMLphp'), 'https://backdropcms.org/project/simplesamlphp_auth'))),
       );
     }
   }
 
   return $requirements;
+}
+
+/**
+ * Check if the SimpleSAMLphp library can be found.
+ */
+function simplesamlphp_auth_library_found() {
+  $library_found = FALSE;
+  if (!module_exists('composer_manager')) {
+    $dir = config_get('simplesamlphp_auth.settings', 'installdir');
+    if (file_exists($dir . '/lib/_autoload.php')) {
+      include_once $dir . '/lib/_autoload.php';
+      $library_found = TRUE;
+    }
+  }
+  elseif (class_exists('SimpleSAML\Configuration')) {
+    $library_found = TRUE;
+  }
+  return $library_found;
 }
 
 /**
