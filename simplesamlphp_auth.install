@@ -32,7 +32,8 @@ function simplesamlphp_auth_requirements($phase) {
       );
     }
 
-    if (!simplesamlphp_auth_library_found()) {
+    $basedir = $config->get('installdir');
+    if (!class_exists('\SimpleSAML\Configuration') && !file_exists($basedir . '/lib/_autoload.php')) {
       $requirements['simplesamlphp_auth'] = array(
         'severity' => REQUIREMENT_WARNING,
         'title' => 'simpleSAMLphp_auth',
@@ -43,24 +44,6 @@ function simplesamlphp_auth_requirements($phase) {
   }
 
   return $requirements;
-}
-
-/**
- * Check if the SimpleSAMLphp library can be found.
- */
-function simplesamlphp_auth_library_found() {
-  $library_found = FALSE;
-  if (!module_exists('composer_manager')) {
-    $dir = config_get('simplesamlphp_auth.settings', 'installdir');
-    if (file_exists($dir . '/lib/_autoload.php')) {
-      include_once $dir . '/lib/_autoload.php';
-      $library_found = TRUE;
-    }
-  }
-  elseif (class_exists('SimpleSAML\Configuration')) {
-    $library_found = TRUE;
-  }
-  return $library_found;
 }
 
 /**
